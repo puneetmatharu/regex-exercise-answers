@@ -2,6 +2,8 @@
 
 Exercises obtained from the [learnbyexample/py_regular_expressions](https://github.com/learnbyexample/py_regular_expressions) repository.
 
+Tests are run using the `pytest` framework.
+
 ## Progress
 
 A ticked checkbox indicates that the exercises in that chapter have been completed.
