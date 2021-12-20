@@ -1,4 +1,5 @@
 import re
+from typing import List
 
 
 class TestIntroduction:
@@ -23,7 +24,7 @@ class TestIntroduction:
         assert solution(ip) == 'They ate five apples and five oranges'
 
     def test_d(self):
-        def solution(text: str):
+        def solution(items: List[str]):
             return [w for w in items if not re.search("e", w)]
         items = ['goal', 'new', 'user', 'sit', 'eat', 'dinner']
         assert solution(items) == ['goal', 'sit']
@@ -68,13 +69,13 @@ class TestIntroduction:
         assert solution(para) == soln
 
     def test_h(self):
-        def solution(text: str):
+        def solution(items: List[str]):
             return [w for w in items if re.search("(a|w)", w)]
         items = ['goal', 'new', 'user', 'sit', 'eat', 'dinner']
         assert solution(items) == ['goal', 'new', 'eat']
 
     def test_i(self):
-        def solution(text: str):
+        def solution(items: List[str]):
             return [w for w in items if re.search("(?=.*e)(?=.*n)", w)]
         items = ['goal', 'new', 'user', 'sit', 'eat', 'dinner']
         assert solution(items) == ['new', 'dinner']
@@ -89,60 +90,79 @@ class TestIntroduction:
 class TestAnchors:
     def test_a(self):
         def solution(text: str):
-            return True
-        line1 = ''
+            pat = re.compile("^be")
+            return bool(pat.search(text))
+        line1 = 'be nice'
+        line2 = '"best!"'
+        line3 = 'better?'
+        line4 = 'oh no\nbear spotted'
         assert solution(line1) == True
+        assert solution(line2) == False
+        assert solution(line3) == True
+        assert solution(line4) == False
 
     def test_b(self):
         def solution(text: str):
-            return True
-        line1 = ''
-        assert solution(line1) == True
+            return re.sub(r"\bred\b", "brown", text)
+        words = 'bred red spread credible'
+        assert solution(words) == 'bred brown spread credible'
 
     def test_c(self):
-        def solution(text: str):
-            return True
-        line1 = ''
-        assert solution(line1) == True
+        def solution(words: List[str]):
+            return [w for w in words if re.search(r"\B42\B", w)]
+        words = ['hi42bye', 'nice1423', 'bad42', 'cool_42a', 'fake4b']
+        assert solution(words) == ['hi42bye', 'nice1423', 'cool_42a']
 
     def test_d(self):
-        def solution(text: str):
-            return True
-        line1 = ''
-        assert solution(line1) == True
+        def solution(items: List[str]):
+            return [e for e in items if re.search(r"(\Aden|ly\Z)", e)]
+        items = ['lovely', '1\ndentist', '2 lonely', 'eden', 'fly\n', 'dent']
+        assert solution(items) == ['lovely', '2 lonely', 'dent']
 
     def test_e(self):
         def solution(text: str):
-            return True
-        line1 = ''
-        assert solution(line1) == True
+            return re.sub(r"(?m)^mall\b", "1234", text)
+        para = """\
+        \nball fall wall tall\
+        \nmall call ball pall\
+        \nwall mall ball fall\
+        \nmallet wallet malls"""
+        soln = """\
+        \nball fall wall tall\
+        \n1234 call ball pall\
+        \nwall mall ball fall\
+        \nmallet wallet malls"""
+        assert solution(para) == soln
 
     def test_f(self):
-        def solution(text: str):
-            return True
-        line1 = ''
-        assert solution(line1) == True
+        def solution(items: List[str]):
+            return [e for e in items if re.search(r"(?m)(^den|ly$)", e)]
+        items = ['lovely', '1\ndentist',
+                 '2 lonely', 'eden', 'fly\nfar', 'dent']
+        assert solution(items) == [
+            'lovely', '1\ndentist', '2 lonely', 'fly\nfar', 'dent']
 
     def test_g(self):
-        def solution(text: str):
-            return True
-        line1 = ''
-        assert solution(line1) == True
+        def solution(items: List[str]):
+            return [e for e in items if re.search(r"(?i)\A12\nthree\Z", e)]
+        items = ['12\nthree\n', '12\nThree', '12\nthree\n4', '12\nthree']
+        assert solution(items) == ['12\nThree', '12\nthree']
 
     def test_h(self):
-        def solution(text: str):
-            return True
-        line1 = ''
-        assert solution(line1) == True
+        def solution(items: List[str]):
+            return [re.sub(r"^hand\B", "X", e) for e in items]
+        items = ['handed', 'hand', 'handy', 'unhanded', 'handle', 'hand-2']
+        assert solution(items) == ['Xed', 'hand',
+                                   'Xy', 'unhanded', 'Xle', 'hand-2']
 
     def test_i(self):
-        def solution(text: str):
-            return True
-        line1 = ''
-        assert solution(line1) == True
+        def solution(items: List[str]):
+            return [re.sub("e", "X", e) for e in items if re.search(r"\Ah", e)]
+        items = ['handed', 'hand', 'handy', 'unhanded', 'handle', 'hand-2']
+        assert solution(items) == ['handXd', 'hand',
+                                   'handy', 'handlX', 'hand-2']
 
-    def test_j(self):
-        def solution(text: str):
-            return True
-        line1 = ''
-        assert solution(line1) == True
+
+if __name__ == "__main__":
+    import pytest
+    pytest.main(["-v", f"{__file__}"])
