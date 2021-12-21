@@ -9,9 +9,9 @@ Tests are run using the `pytest` framework.
 A ticked checkbox indicates that the exercises in that chapter have been completed.
 
 - [x] `re` introduction
-- [ ] Anchors
-- [ ] Alternation and Grouping
-- [ ] Escaping metacharacters
+- [x] Anchors
+- [x] Alternation and Grouping
+- [x] Escaping metacharacters
 - [ ] Dot metacharacter and Quantifiers
 - [ ] Interlude: Tools for debugging and visualization
 - [ ] Working with matched portions

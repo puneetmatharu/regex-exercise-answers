@@ -163,6 +163,106 @@ class TestAnchors:
                                    'handy', 'handlX', 'hand-2']
 
 
+class TestAlternationAndGrouping:
+    def test_a(self):
+        def solution(items: List[str]):
+            return [x for x in items if re.search(r"(\Aden|ly\Z)", x)]
+        items = ['lovely', '1\ndentist', '2 lonely', 'eden', 'fly\n', 'dent']
+        assert solution(items) == ['lovely', '2 lonely', 'dent']
+
+    def test_b(self):
+        def solution(items: List[str]):
+            return [x for x in items if re.search(r"(?m)(^den|ly$)", x)]
+        items = items = ['lovely', '1\ndentist',
+                         '2 lonely', 'eden', 'fly\nfar', 'dent']
+        assert solution(items) == [
+            'lovely', '1\ndentist', '2 lonely', 'fly\nfar', 'dent']
+
+    def test_c(self):
+        def solution(line: str):
+            pat = re.compile(r"re(mov||ceiv|fus)ed")
+            return pat.sub('X', line)
+        s1 = 'creed refuse removed read'
+        s2 = 'refused reed redo received'
+        assert solution(s1) == 'cX refuse X read'
+        assert solution(s2) == 'X X redo X'
+
+    def test_d(self):
+        def solution(line: str):
+            words = ['late', 'later', 'slated']
+            # Match largest words first
+            pat = re.compile("|".join(sorted(words, reverse=True)))
+            return pat.sub('A', line)
+        s1 = 'plate full of slate'
+        s2 = "slated for later, don't be late"
+        assert solution(s1) == 'pA full of sA'
+        assert solution(s2) == "A for A, don't be A"
+
+    def test_e(self):
+        def solution(items: List[str]):
+            words = ['late', 'later', 'slated']
+            pat = re.compile('|'.join(words))
+            return [x for x in items if pat.fullmatch(x)]
+        items = ['slate', 'later', 'plate', 'late', 'slates', 'slated ']
+        assert solution(items) == ['later', 'late']
+
+
+class TestEscapingMetacharacters:
+    def test_a(self):
+        def solution(line: str):
+            return re.sub(r"\(9-2\)\*", "3", line)
+        str1 = '(9-2)*5+qty/3'
+        str2 = '(qty+4)/2-(9-2)*5+pq/4'
+        assert solution(str1) == '35+qty/3'
+        assert solution(str2) == '(qty+4)/2-35+pq/4'
+
+    def test_b(self):
+        def solution(line: str):
+            esc = re.escape(r"(4)\|")
+            pat = re.compile(r"\A" + esc + r"|" + esc + r"\Z")
+            return pat.sub("2", line)
+        s1 = r'2.3/(4)\|6 foo 5.3-(4)\|'
+        s2 = r'(4)\|42 - (4)\|3'
+        s3 = 'two - (4)\\|\n'
+        assert solution(s1) == '2.3/(4)\\|6 foo 5.3-2'
+        assert solution(s2) == '242 - (4)\\|3'
+        assert solution(s3) == 'two - (4)\\|\n'
+
+    def test_c(self):
+        def solution(line: str):
+            items = ['a.b', '3+n', r'x\y\z', 'qty||price', '{n}']
+            pat = re.compile('|'.join([re.escape(x) for x in items]))
+            return pat.sub('X', line)
+        s1 = '0a.bcd'
+        s2 = 'E{n}AMPLE'
+        s3 = r'43+n2 ax\y\ze'
+        assert solution(s1) == '0Xcd'
+        assert solution(s2) == 'EXAMPLE'
+        assert solution(s3) == '4X2 aXe'
+
+    def test_d(self):
+        def solution(line: str):
+            return re.sub("\b", " ", line)
+        ip = '123\b456'
+        assert solution(ip) == '123 456'
+
+    def test_e(self):
+        def solution(line: str):
+            return re.sub(r"\\e", "e", line)
+        ip = r'th\er\e ar\e common asp\ects among th\e alt\ernations'
+        assert solution(
+            ip) == 'there are common aspects among the alternations'
+
+    def test_f(self):
+        def solution(line: str):
+            eqns = ['(a^b)', '(a/b)', '(a^b)+2']
+            pat = re.compile("|".join([re.escape(x)
+                             for x in sorted(eqns, reverse=True)]))
+            return pat.sub("X", line)
+        ip = '3-(a^b)+2*(a^b)-(a/b)+3'
+        assert solution(ip) == '3-X*X-X+3'
+
+
 if __name__ == "__main__":
     import pytest
     pytest.main(["-v", f"{__file__}"])
