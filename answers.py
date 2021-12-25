@@ -263,6 +263,119 @@ class TestEscapingMetacharacters:
         assert solution(ip) == '3-X*X-X+3'
 
 
+class TestDotMetacharacterAndQuantifiers:
+    def test_a(self):
+        def solution(line: str):
+            return re.sub(r"42/+5", "8", line)
+        ip = 'a+42//5-c pressure*3+42/5-14256'
+        assert solution(ip) == 'a+8-c pressure*3+8-14256'
+
+    def test_b(self):
+        def solution(items: List[str]):
+            return [x for x in items if re.search(r"^hand(.?|le)\Z", x)]
+        items = ['handed', 'hand', 'handled',
+                 'handy', 'unhand', 'hands', 'handle']
+        assert solution(items) == ['hand', 'handy', 'hands', 'handle']
+
+    def test_c(self):
+        def solution(line: str):
+            return re.split(r"42/{1,2}5", line)
+        eqn1 = 'a+42//5-c'
+        eqn2 = 'pressure*3+42/5-14256'
+        eqn3 = 'r*42-5/3+42///5-42/53+a'
+        assert solution(eqn1) == ['a+', '-c']
+        assert solution(eqn2) == ['pressure*3+', '-14256']
+        assert solution(eqn3) == ['r*42-5/3+42///5-', '3+a']
+
+    def test_d(self):
+        def solution(line: str):
+            pat = re.compile(r"i.*")
+            return pat.sub("", line)
+        s1 = 'remove the special meaning of such constructs'
+        s2 = 'characters while constructing'
+        assert solution(s1) == 'remove the spec'
+        assert solution(s2) == 'characters wh'
+
+    def test_e(self):
+        def solution(line: str):
+            remove_parentheses = re.compile(r"\(.*?\)")
+            return remove_parentheses.sub('', line)
+        str1 = 'a+b(addition)'
+        str2 = 'a/b(division) + c%d(#modulo)'
+        str3 = 'Hi there(greeting). Nice day(a(b)'
+        assert solution(str1) == 'a+b'
+        assert solution(str2) == 'a/b + c%d'
+        assert solution(str3) == 'Hi there. Nice day'
+
+    def test_f(self):
+        def solution(line: str):
+            change = re.compile(r'inco|ink|ing|inter|int|ion|in')
+            return change.sub('X', words)
+        words = 'plink incoming tint winter in caution sentient'
+        assert solution(words) == 'plX XmX tX wX X cautX sentient'
+
+    def test_g(self):
+        "'?' is same as {0,1}"
+        "'*' is same as {0,}"
+        "'+' is same as {1,}"
+
+    def test_h(self):
+        "Question: '(a*|b*)' is same as '(a | b)*'. True or False?"
+        answer = False
+
+    def test_i(self):
+        def solution(line: str):
+            pat = re.compile(r"(?i)(test)(.+)\Z")
+            return pat.sub('', line)
+        s1 = 'this is a Test'
+        s2 = 'always test your RE for corner cases'
+        s3 = 'a TEST of skill tests?'
+        assert solution(s1) == "this is a Test"
+        assert solution(s2) == "always "
+        assert solution(s3) == "a "
+
+    def test_j(self):
+        def solution(words: List[str]):
+            pats = (r"^s", r"e", r"t")
+            return [w for w in words if all([re.search(p, w) for p in pats])]
+        words = ['sequoia', 'subtle', 'exhibit',
+                 'asset', 'sets', 'tests', 'site']
+        assert solution(words) == ['subtle', 'sets', 'site']
+
+    def test_k(self):
+        def solution(words: List[str]):
+            return [w for w in words if re.search(".{6,}", w)]
+        words = ['sequoia', 'subtle', 'exhibit',
+                 'asset', 'sets', 'tests', 'site']
+        assert solution(words) == ['sequoia', 'subtle', 'exhibit']
+
+    def test_l(self):
+        def solution(words: List[str]):
+            pat = re.compile(r"^(s|t)(.{,5})$")
+            return [w for w in words if pat.search(w)]
+        words = ['sequoia', 'subtle', 'exhibit',
+                 'asset', 'sets', 'tests', 'site']
+        assert solution(words) == ['subtle', 'sets', 'tests', 'site']
+
+    def test_m(self):
+        def solution(line: str):
+            return re.sub(r'<.+?>', '', line)
+        ip = 'a<apple> 1<> b<bye> 2<> c<cat>'
+        # Not possible easily without character classes!
+        assert solution(ip) != 'a 1<> b 2<> c'
+
+    def test_n(self):
+        def solution(line: str):
+            pat = re.compile(r" +// +")
+            return pat.split(line, maxsplit=1)
+        s1 = 'go there  //   "this // that"'
+        s2 = 'a//b // c//d e//f // 4//5'
+        s3 = '42// hi//bye//see // carefully'
+        assert solution(s1) == ['go there', '"this // that"']
+        assert solution(s2) == ['a//b', 'c//d e//f // 4//5']
+        assert solution(s3) == ['42// hi//bye//see', 'carefully']
+
+
 if __name__ == "__main__":
     import pytest
     pytest.main(["-v", f"{__file__}"])

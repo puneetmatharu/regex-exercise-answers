@@ -12,7 +12,7 @@ A ticked checkbox indicates that the exercises in that chapter have been complet
 - [x] Anchors
 - [x] Alternation and Grouping
 - [x] Escaping metacharacters
-- [ ] Dot metacharacter and Quantifiers
+- [x] Dot metacharacter and Quantifiers
 - [ ] Interlude: Tools for debugging and visualization
 - [ ] Working with matched portions
 - [ ] Character class
