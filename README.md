@@ -13,8 +13,8 @@ A ticked checkbox indicates that the exercises in that chapter have been complet
 - [x] Alternation and Grouping
 - [x] Escaping metacharacters
 - [x] Dot metacharacter and Quantifiers
-- [ ] Interlude: Tools for debugging and visualization
-- [ ] Working with matched portions
+- [x] Interlude: Tools for debugging and visualization
+- [x] Working with matched portions
 - [ ] Character class
 - [ ] Groupings and backreferences
 - [ ] Interlude: Common tasks

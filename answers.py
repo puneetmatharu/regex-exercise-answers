@@ -376,6 +376,139 @@ class TestDotMetacharacterAndQuantifiers:
         assert solution(s3) == ['42// hi//bye//see', 'carefully']
 
 
+class TestWorkingWithMatchedPortions:
+    def test_a(self):
+        def solution(line: str):
+            pat = re.compile(r"is.*t")
+            return pat.search(line).group()
+        str1 = 'This the biggest fruit you have seen?'
+        str2 = 'Your mission is to read and practice consistently'
+        assert solution(str1) == 'is the biggest fruit'
+        assert solution(str2) == 'ission is to read and practice consistent'
+
+    def test_b(self):
+        def solution(line: str):
+            pat = re.compile(r"is|the|was|to")
+            return pat.search(line).span()[0]
+        s1 = 'match after the last newline character'
+        s2 = 'and then you want to test'
+        s3 = 'this is good bye then'
+        s4 = 'who was there to see?'
+        assert solution(s1) == 12
+        assert solution(s2) == 4
+        assert solution(s3) == 2
+        assert solution(s4) == 4
+
+    def test_c(self):
+        def solution(line: str):
+            pat = re.compile(r"is|the|was|to")
+            *_, match = pat.finditer(line)
+            return match.span()[0]
+        s1 = 'match after the last newline character'
+        s2 = 'and then you want to test'
+        s3 = 'this is good bye then'
+        s4 = 'who was there to see?'
+        assert solution(s1) == 12
+        assert solution(s2) == 18
+        assert solution(s3) == 17
+        assert solution(s4) == 14
+
+    def test_d(self):
+        def solution(line: str):
+            return re.search(r":(.*)", line).group(1)
+        ip = 'fruits:apple, mango, guava, blueberry'
+        assert solution(ip) == 'apple, mango, guava, blueberry'
+
+    def test_e(self):
+        def solution(line: str):
+            import math
+            pat = re.compile(r"(.*-)(.*)")
+            return pat.sub(lambda x: f"{x[1]}{math.log(float(x[2]))}", line)
+        s1 = 'first-3.14'
+        s2 = 'next-123'
+        assert solution(s1) == 'first-1.144222799920162'
+        assert solution(s2) == 'next-4.812184355372417'
+
+    def test_f(self):
+        def solution(line: str):
+            word_map = {"par": "spar", "spare": "extra", "park": "garden"}
+            pat = re.compile(r'spare|park|par')
+            return pat.sub(lambda m: word_map[m[0]], line)
+        str1 = 'apartment has a park'
+        str2 = 'do you have a spare cable'
+        str3 = 'write a parser'
+        assert solution(str1) == 'aspartment has a garden'
+        assert solution(str2) == 'do you have a extra cable'
+        assert solution(str3) == 'write a sparser'
+
+    def test_g(self):
+        def solution(line: str):
+            return re.findall(r"\((.*?)\)", line)
+        ip = 'another (way) to reuse (portion) matched (by) capture groups'
+        assert solution(ip) == ['way', 'portion', 'by']
+
+    def test_h(self):
+        def solution(line: str):
+            return re.findall(r"<.+?>", line)
+        ip = 'a<apple> 1<> b<bye> 2<> c<cat>'
+        assert solution(ip) == ['<apple>', '<> b<bye>', '<> c<cat>']
+
+    def test_i(self):
+        def solution(line: str):
+            pat = re.compile(r"(.+?),(.+?) ")
+            return pat.findall(line)
+        row1 = '-2,5 4,+3 +42,-53 4356246,-357532354 '
+        row2 = '1.32,-3.14 634,5.63 63.3e3,9907809345343.235 '
+        assert solution(row1) == [('-2', '5'), ('4', '+3'),
+                                  ('+42', '-53'), ('4356246', '-357532354')]
+        assert solution(row2) == [('1.32', '-3.14'),
+                                  ('634', '5.63'), ('63.3e3', '9907809345343.235')]
+
+    def test_j(self):
+        def solution1(line: str):
+            result = re.findall(r"(.+?),(.+?) ", line)
+            sums = [sum(map(int, pair)) for pair in result]
+            return sums
+
+        def solution2(line: str):
+            result = re.findall(r"(.+?),(.+?) ", line)
+            sums = [sum(map(float, pair)) for pair in result]
+            return sums
+        row1 = '-2,5 4,+3 +42,-53 4356246,-357532354 '
+        row2 = '1.32,-3.14 634,5.63 63.3e3,9907809345343.235 '
+        assert solution1(row1) == [3, 7, -11, -353176108]
+        assert solution2(row2) == [-1.82, 639.63, 9907809408643.234]
+
+    def test_k(self):
+        def solution(line: str):
+            return re.split(r":.+?-(.+?);", line)
+        ip = '42:no-output;1000:car-truck;SQEX49801'
+        assert solution(ip) == ['42', 'output',
+                                '1000', 'truck', 'SQEX49801']
+
+    def test_l(self):
+        def solution(words: List[str]):
+            return [(w, w.count("t")) for w in words]
+        words = ['sequoia', 'attest', 'tattletale', 'asset']
+        assert solution(words) == [
+            ('sequoia', 0), ('attest', 3), ('tattletale', 4), ('asset', 1)]
+
+    def test_m(self):
+        def solution(line: str):
+            return [m.groups(default="NA") for m in re.finditer(r'(.{4})(..)?:', line)]
+        ip = 'TWXA42:JWPA:NTED01:'
+        assert solution(ip) == [('TWXA', '42'), ('JWPA', 'NA'), ('NTED', '01')]
+
+    def test_n(self):
+        def solution(line: str):
+            pat = re.compile(r"(.*?):(.*?),")
+            return {m[1]: m[2] for m in pat.finditer(line)}
+        row1 = 'name:rohan,maths:75,phy:89,'
+        row2 = 'name:rose,maths:88,phy:92,'
+        assert solution(row1) == {'name': 'rohan', 'maths': '75', 'phy': '89'}
+        assert solution(row2) == {'name': 'rose', 'maths': '88', 'phy': '92'}
+
+
 if __name__ == "__main__":
     import pytest
     pytest.main(["-v", f"{__file__}"])
