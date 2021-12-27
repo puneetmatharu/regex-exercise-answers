@@ -509,6 +509,160 @@ class TestWorkingWithMatchedPortions:
         assert solution(row2) == {'name': 'rose', 'maths': '88', 'phy': '92'}
 
 
+class TestCharacterClass:
+    def test_a(self):
+        def solution(items: List[str]):
+            return [x for x in items if re.search(r"^hand.*([sy]|le)", x)]
+        items = ['-handy', 'hand', 'handy', 'unhand', 'hands', 'handle']
+        assert solution(items) == ['handy', 'hands', 'handle']
+
+    def test_b(self):
+        def solution(line: str):
+            return re.sub(r"\bre[ea]?d\b", "X", line)
+        ip = 'redo red credible :read: rod reed'
+        assert solution(ip) == 'redo X credible :X: rod X'
+
+    def test_c(self):
+        def solution(items: List[str]):
+            return [x for x in items if re.search(r"[ei].*[ln]", x)]
+        words = ['surrender', 'unicorn', 'newer',
+                 'door', 'empty', 'eel', 'pest']
+        assert solution(words) == ['surrender', 'unicorn', 'eel']
+
+    def test_d(self):
+        def solution(items: List[str]):
+            pats = (r"[ei]", r"[ln]")
+            return [x for x in items if all(re.search(p, x) for p in pats)]
+        words = ['surrender', 'unicorn', 'newer',
+                 'door', 'empty', 'eel', 'pest']
+        assert solution(words) == ['surrender', 'unicorn', 'newer', 'eel']
+
+    def test_e(self):
+        def solution(line: str):
+            hex_seq = re.compile(r"\b(0x)?[\da-f]+\b", flags=re.I)
+            return [m[0] for m in hex_seq.finditer(line)]
+        str1 = '128A foo 0xfe32 34 0xbar'
+        str2 = '0XDEADBEEF place 0x0ff1ce bad'
+        assert solution(str1) == ['128A', '0xfe32', '34']
+        assert solution(str2) == ['0XDEADBEEF', '0x0ff1ce', 'bad']
+
+    def test_f(self):
+        def solution(line: str):
+            remove_parentheses = re.compile(r"\([^()]*\)")
+            return remove_parentheses.sub('', line)
+        str1 = 'def factorial()'
+        str2 = 'a/b(division) + c%d(#modulo) - (e+(j/k-3)*4)'
+        str3 = 'Hi there(greeting). Nice day(a(b)'
+        assert solution(str1) == 'def factorial'
+        assert solution(str2) == 'a/b + c%d - (e+*4)'
+        assert solution(str3) == 'Hi there. Nice day(a'
+
+    def test_g(self):
+        def solution(words: List[str]):
+            return [w for w in words if re.search(f"^[^epu]", w)]
+        words = ['surrender', 'unicorn', 'newer',
+                 'door', 'empty', 'eel', 'pest']
+        assert solution(words) == ['surrender', 'newer', 'door']
+
+    def test_h(self):
+        def solution(words: List[str]):
+            return [w for w in words if not re.search(f"([uw]|ee|-)", w)]
+        words = ['p-t', 'you', 'tea', 'heel', 'owe', 'new', 'reed', 'ear']
+        assert solution(words) == ['tea', 'ear']
+
+    def test_i(self):
+        def solution(line: str):
+            pat = re.compile(r"(,[^,]*){3}\Z")
+            return pat.sub(",WHTSZ323", line)
+        row1 = '(2),kite,12,,D,C,,'
+        row2 = 'hi,bye,sun,moon'
+        assert solution(row1) == '(2),kite,12,,D,WHTSZ323'
+        assert solution(row2) == 'hi,WHTSZ323'
+
+    def test_j(self):
+        def solution(line: str):
+            pat = re.compile(r"[\d\s]+")
+            return pat.split(line)
+        str1 = 'lion \t Ink32onion Nice'
+        str2 = '**1\f2\n3star\t7 77\r**'
+        assert solution(str1) == ['lion', 'Ink', 'onion', 'Nice']
+        assert solution(str2) == ['**', 'star', '**']
+
+    def test_k(self):
+        def solution(line: str):
+            return re.sub(r"<[a-zA-Z]+>", "", line)
+        ip = 'a<apple> 1<> b<bye> 2<> c<cat>'
+        assert solution(ip) == 'a 1<> b 2<> c'
+
+    def test_l(self):
+        """
+            '\b[a-z](on | no)[a-z]\b' is same as '\b[a-z][on]{2}[a-z]\b'.
+            True or False?
+        """
+        def solution():
+            return False
+        assert solution() == False
+
+    def test_m(self):
+        def solution(items: List[str]):
+            def filter_gt_624(item: re.Match):
+                return any(int(m[0]) > 624 for m in re.finditer(r'\d+', item))
+            return [e for e in items if filter_gt_624(e)]
+        items = ['hi0000432abcd', 'car00625',
+                 '42_624 0512', '3.14 96 2 foo1234baz']
+        assert solution(items) == ['car00625', '3.14 96 2 foo1234baz']
+
+    def test_n(self):
+        def solution(line: str):
+            count = 0
+            while True:
+                (line, n_brace) = re.subn(r"\{[^{}]*\}", "", line)
+                if n_brace == 0:
+                    break
+                count += 1
+            if re.search(r"[{}]", line):
+                return -1
+            return count
+        str1 = 'a*b'
+        str2 = '}a+b{'
+        str3 = 'a*b+{}'
+        str4 = '{{a+2}*{b+c}+e}'
+        str5 = '{{a+2}*{b+{c*d}}+e}'
+        str6 = '{{a+2}*{\n{b+{c*d}}+e*d}}'
+        str7 = 'a*{b+c*{e*3.14}}}'
+        assert solution(str1) == 0
+        assert solution(str2) == -1
+        assert solution(str3) == 1
+        assert solution(str4) == 2
+        assert solution(str5) == 3
+        assert solution(str6) == 4
+        assert solution(str7) == -1
+
+    def test_o(self):
+        def solution(line: str):
+            return re.split(r"\s+", line.strip())
+        ip = ' \t\r  so  pole\t\t\t\n\nlit in to \r\n\v\f  '
+        assert solution(ip) == ['so', 'pole', 'lit', 'in', 'to']
+
+    def test_p(self):
+        def solution1(line: str):
+            return re.split(r"\W+", line)
+
+        def solution2(line: str):
+            return re.split(r"(\W+)", line)
+        ip = 'price_42 roast^\t\n^-ice==cat\neast'
+        assert solution1(ip) == ['price_42', 'roast', 'ice', 'cat', 'east']
+        assert solution2(ip) == ['price_42', ' ', 'roast',
+                                 '^\t\n^-', 'ice', '==', 'cat', '\n', 'east']
+
+    def test_q(self):
+        def solution(items: List[str]):
+            return [x for x in items if re.search(r"^\s*[^#\s]", x)]
+        items = ['    #comment', '\t\napple #42',
+                 '#oops', 'sure', 'no#1', '\t\r\f']
+        assert solution(items) == ['\t\napple #42', 'sure', 'no#1']
+
+
 if __name__ == "__main__":
     import pytest
     pytest.main(["-v", f"{__file__}"])

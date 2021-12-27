@@ -15,7 +15,7 @@ A ticked checkbox indicates that the exercises in that chapter have been complet
 - [x] Dot metacharacter and Quantifiers
 - [x] Interlude: Tools for debugging and visualization
 - [x] Working with matched portions
-- [ ] Character class
+- [x] Character class
 - [ ] Groupings and backreferences
 - [ ] Interlude: Common tasks
 - [ ] Lookarounds
